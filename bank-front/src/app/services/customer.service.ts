@@ -19,4 +19,7 @@ export class CustomerService {
       environment.baseUrl + '/search?keyword=' + mc
     );
   }
+  saveCustomer(customer: Customer): Observable<Customer> {
+    return this.http.post<Customer>(environment.baseUrl, customer);
+  }
 }

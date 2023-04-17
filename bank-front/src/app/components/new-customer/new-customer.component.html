@@ -1,0 +1,21 @@
+<div class="container popi mt-3 col-md-6 offset-3">
+    <div class="card">
+        <div class="card-header text-center
+    ">
+            <h3>Nouveau Client</h3>
+        </div>
+        <div class="card-body">
+            <form [formGroup]="newCustomerFormGroup" (ngSubmit)="handleSaveCustomer()">
+                <div class="mb-3">
+                    <label class="form-label">Nom</label>
+                    <input type="text" formControlName="name" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="text" formControlName="email" class="form-control">
+                </div>
+                <button class="btn btn-info">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
