@@ -38,8 +38,6 @@ public class BankAccountServiceImpl implements BankAccountService {
     private final AccountOperationRepository accountOperationRepository;
     private final BankAccountMapperImpl dtoMapper;
 
-
-
     @Override
     public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
         Customer customer=dtoMapper.toCustomer(customerDTO);
@@ -51,11 +49,9 @@ public class BankAccountServiceImpl implements BankAccountService {
     public CurrentBankAccountDTO saveCurrentBankAccount(double initialBalance, double overDraft, Long customerId) {
         Customer customer=customerRepository.findById(customerId).orElseThrow(()-> new CustomerNotFoundException("Unable to find the specified customer"));
 
-        Random random = new Random();
-
         CurrentAccount currentAccount=new CurrentAccount();
         currentAccount.setId(UUID.randomUUID().toString());
-        currentAccount.setStatus(random.nextDouble()>0.8? ACTIVATED: CREATED);
+        currentAccount.setStatus(Math.random()>0.8? ACTIVATED: CREATED);
         currentAccount.setCreatedAt(new Date());
         currentAccount.setBalance(initialBalance);
         currentAccount.setOverDraft(overDraft);
@@ -69,11 +65,9 @@ public class BankAccountServiceImpl implements BankAccountService {
     public SavingBankAccountDTO saveSavingBankAccount(double initialBalance, double interestRate, Long customerId) {
         Customer customer=customerRepository.findById(customerId).orElseThrow(()-> new CustomerNotFoundException("Unable to find the specified customer"));
 
-        Random random = new Random();
-
         SavingAccount savingAccount=new SavingAccount();
         savingAccount.setId(UUID.randomUUID().toString());
-        savingAccount.setStatus(random.nextDouble()>0.8? ACTIVATED: CREATED);
+        savingAccount.setStatus(Math.random()>0.8? ACTIVATED: CREATED);
         savingAccount.setCreatedAt(new Date());
         savingAccount.setBalance(initialBalance);
         savingAccount.setInterestRate(interestRate);
