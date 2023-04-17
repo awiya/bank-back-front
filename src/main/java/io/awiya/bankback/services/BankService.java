@@ -5,15 +5,17 @@ import io.awiya.bankback.entities.BankAccount;
 import io.awiya.bankback.entities.CurrentAccount;
 import io.awiya.bankback.entities.SavingAccount;
 import io.awiya.bankback.repositories.BankAccountRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class BankService {
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
+
+    private final BankAccountRepository bankAccountRepository;
     public void consulter(){
         BankAccount bankAccount=
                 bankAccountRepository.findById("0b36be78-8d5d-446b-9f20-37eadc9d3c3b").orElse(null);
