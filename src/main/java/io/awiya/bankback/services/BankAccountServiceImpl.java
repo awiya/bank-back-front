@@ -2,6 +2,7 @@ package io.awiya.bankback.services;
 
 import io.awiya.bankback.dtos.*;
 import io.awiya.bankback.entities.*;
+import io.awiya.bankback.enums.AccountStatus;
 import io.awiya.bankback.enums.OperationType;
 import io.awiya.bankback.exceptions.BalanceNotSufficientException;
 import io.awiya.bankback.exceptions.BankAccountNotFoundException;
@@ -20,8 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static io.awiya.bankback.enums.AccountStatus.ACTIVATED;
+import static io.awiya.bankback.enums.AccountStatus.CREATED;
 
 @Service
 @Transactional
@@ -32,6 +37,8 @@ public class BankAccountServiceImpl implements BankAccountService {
     private BankAccountRepository bankAccountRepository;
     private AccountOperationRepository accountOperationRepository;
     private BankAccountMapperImpl dtoMapper;
+
+
 
     @Override
     public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
@@ -44,10 +51,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public CurrentBankAccountDTO saveCurrentBankAccount(double initialBalance, double overDraft, Long customerId) throws CustomerNotFoundException {
         Customer customer=customerRepository.findById(customerId).orElse(null);
+        Random random = new Random();
         if(customer==null)
             throw new CustomerNotFoundException("Customer not found");
         CurrentAccount currentAccount=new CurrentAccount();
         currentAccount.setId(UUID.randomUUID().toString());
+        currentAccount.setStatus(random.nextDouble()>0.8? ACTIVATED: CREATED);
         currentAccount.setCreatedAt(new Date());
         currentAccount.setBalance(initialBalance);
         currentAccount.setOverDraft(overDraft);
@@ -59,10 +68,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public SavingBankAccountDTO saveSavingBankAccount(double initialBalance, double interestRate, Long customerId) throws CustomerNotFoundException {
         Customer customer=customerRepository.findById(customerId).orElse(null);
+        Random random = new Random();
         if(customer==null)
             throw new CustomerNotFoundException("Customer not found");
         SavingAccount savingAccount=new SavingAccount();
         savingAccount.setId(UUID.randomUUID().toString());
+        savingAccount.setStatus(random.nextDouble()>0.8? ACTIVATED: CREATED);
         savingAccount.setCreatedAt(new Date());
         savingAccount.setBalance(initialBalance);
         savingAccount.setInterestRate(interestRate);
