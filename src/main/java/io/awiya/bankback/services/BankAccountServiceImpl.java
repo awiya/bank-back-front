@@ -2,7 +2,6 @@ package io.awiya.bankback.services;
 
 import io.awiya.bankback.dtos.*;
 import io.awiya.bankback.entities.*;
-import io.awiya.bankback.enums.OperationType;
 import io.awiya.bankback.exceptions.BalanceNotSufficientException;
 import io.awiya.bankback.exceptions.BankAccountNotFoundException;
 import io.awiya.bankback.exceptions.CustomerNotFoundException;
@@ -19,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static io.awiya.bankback.enums.AccountStatus.ACTIVATED;
 import static io.awiya.bankback.enums.AccountStatus.CREATED;
+import static io.awiya.bankback.enums.OperationType.CREDIT;
 import static io.awiya.bankback.enums.OperationType.DEBIT;
 
 @Service
@@ -121,7 +120,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccount bankAccount=bankAccountRepository.findById(accountId)
                 .orElseThrow(()->new BankAccountNotFoundException("No BankAccount matching the criteria was found"));
         AccountOperation accountOperation=new AccountOperation();
-        accountOperation.setType(OperationType.CREDIT);
+        accountOperation.setType(CREDIT);
         accountOperation.setAmount(amount);
         accountOperation.setDescription(description);
         accountOperation.setOperationDate(new Date());
@@ -178,8 +177,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     public AccountHistoryDTO getAccountHistory(String accountId, int page, int size){
         BankAccount bankAccount=bankAccountRepository.findById(accountId).orElse(null);
         if(bankAccount==null) throw new BankAccountNotFoundException("No BankAccount matching the criteria was found");
-        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountIdOrderByOperationDateDesc(accountId, PageRequest.of(page, size));
+
+        Page<AccountOperation> accountOperations =
+                accountOperationRepository.findByBankAccountIdOrderByOperationDateDesc(accountId, PageRequest.of(page, size));
+
         AccountHistoryDTO accountHistoryDTO=new AccountHistoryDTO();
+
         List<AccountOperationDTO> accountOperationDTOS = accountOperations.getContent().stream().map(dtoMapper::fromAccountOperation).collect(Collectors.toList());
         accountHistoryDTO.setAccountOperationDTOS(accountOperationDTOS);
         accountHistoryDTO.setAccountId(bankAccount.getId());
@@ -193,7 +196,9 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public List<CustomerDTO> searchCustomers(String keyword) {
         List<Customer> customers=customerRepository.searchCustomer(keyword);
-        List<CustomerDTO> customerDTOS = customers.stream().map(dtoMapper::toCustomerDTO).collect(Collectors.toList());
+        List<CustomerDTO> customerDTOS = customers.stream()
+                .map(dtoMapper::toCustomerDTO)
+                .collect(Collectors.toList());
         return customerDTOS;
     }
 }

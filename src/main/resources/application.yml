@@ -14,3 +14,9 @@ spring:
         globally_quoted_identifiers: true
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+
+
+
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
