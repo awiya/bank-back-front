@@ -1,24 +1,46 @@
 <div class="container mt-2 popi">
-    <div class="card" *ngIf="customers">
-        <div class="card-header">Liste des Clients</div>
-        <div class="card-body">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nom du client:</th>
-                        <th>Email:</th>
+    <ng-container *ngIf="customers | async as listCustomers; else failureOrLoading">
+        <div class="card">
+            <div class="card-header">Liste des Clients</div>
+            <div class="card-body">
+                <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchCustomers()">
+                    <div class="input-group">
+                        <label class="input-group-text">Mot-clé:</label>
+                        <input type="text" formControlName="keyword" class="form-control">
+                        <button class="btn btn-info">Rechercher</button>
+                    </div>
+                </form>
+                <table class="table mt-2">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Nom du client</th>
+                            <th>Email</th>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let c of customers">
-                        <td>{{c.id}}</td>
-                        <td>{{c.name}}</td>
-                        <td>{{c.email}}</td>
-                    </tr>
-                </tbody>
-            </table>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let c of customers | async">
+                            <td>{{c.id}}</td>
+                            <td>{{c.name}}</td>
+                            <td>{{c.email}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </ng-container>
+    <ng-template #failureOrLoading>
+        <ng-container *ngIf="errorMessage; else loading">
+            <div class="alert alert-danger col-md-6 mx-auto" role="alert">
+                {{errorMessage}}
+            </div>
+        </ng-container>
+        <ng-template #loading>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 100%"
+                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </ng-template>
+    </ng-template>
 </div>

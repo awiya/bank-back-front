@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { catchError, Observable, of, throwError } from 'rxjs';
+import { Customer } from 'src/app/models/customer.model';
+import { CustomerService } from 'src/app/services/customer.service';
 
 @Component({
   selector: 'app-customers',
@@ -8,14 +11,29 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./customers.component.css'],
 })
 export class CustomersComponent implements OnInit {
-  customers: any;
+  customers: Observable<Customer[]>;
+  errorMessage: string;
+  searchFormGroup: FormGroup;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private customerService: CustomerService,
+    private formBuilder: FormBuilder
+  ) {}
 
   ngOnInit(): void {
-    this.http.get('http://localhost:8080/customers').subscribe((data) => {
-      this.customers = data;
-      console.log(this.customers);
+    this.searchFormGroup = this.formBuilder.group({
+      keyword: this.formBuilder.control(''),
     });
+    this.handleSearchCustomers();
+  }
+
+  handleSearchCustomers() {
+    let kw = this.searchFormGroup.value.keyword;
+    this.customers = this.customerService.searchCustomers(kw).pipe(
+      catchError((err) => {
+        this.errorMessage = err.message;
+        return throwError(err);
+      })
+    );
   }
 }
