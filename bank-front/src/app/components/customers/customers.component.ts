@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { catchError, Observable, of, throwError } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { Customer } from 'src/app/models/customer.model';
 import { CustomerService } from 'src/app/services/customer.service';
 
@@ -35,5 +35,22 @@ export class CustomersComponent implements OnInit {
         return throwError(err);
       })
     );
+  }
+
+  handleDeleteCustomer(c: Customer) {
+    this.customerService.deleteCustomer(c.id).subscribe({
+      next: (resp) => {
+        this.customers = this.customers.pipe(
+          map((data) => {
+            let index = data.indexOf(c);
+            data.slice(index, 1);
+            return data;
+          })
+        );
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 }

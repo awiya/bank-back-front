@@ -22,4 +22,8 @@ export class CustomerService {
   saveCustomer(customer: Customer): Observable<Customer> {
     return this.http.post<Customer>(environment.baseUrl, customer);
   }
+
+  deleteCustomer(id: number) {
+    return this.http.delete(environment.baseUrl + '/' + id);
+  }
 }
