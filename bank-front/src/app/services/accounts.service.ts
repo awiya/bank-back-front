@@ -10,7 +10,15 @@ import { Account } from '../models/account.model';
 export class AccountsService {
   constructor(private http: HttpClient) {}
 
-  getCustomers(): Observable<Account[]> {
-    return this.http.get<Account[]>(environment.baseUrlAccounts);
+  getAccount(id: string, page: number, size: number): Observable<Account> {
+    return this.http.get<Account>(
+      environment.baseUrlAccounts +
+        '/' +
+        id +
+        '/pageOperations?page=' +
+        page +
+        '&size=' +
+        size
+    );
   }
 }

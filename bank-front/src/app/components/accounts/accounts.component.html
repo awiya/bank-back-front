@@ -14,6 +14,14 @@
                         </div>
                     </form>
                 </div>
+                <div class="card-body">
+                    <ng-container *ngIf="account$ | async as account">
+                        <div>
+                            <label for="">#</label>
+                            <label for=""><strong>{{account.accountId}}</strong></label>
+                        </div>
+                    </ng-container>
+                </div>
             </div>
         </div>
     </div>
