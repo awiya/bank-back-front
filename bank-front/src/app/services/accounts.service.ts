@@ -21,4 +21,36 @@ export class AccountsService {
         size
     );
   }
+
+  allAccounts(): Observable<Account[]> {
+    return this.http.get<Account[]>(environment.baseUrlAccounts);
+  }
+
+  debit(accountId: string, amount: number, description: string) {
+    let data = {
+      accountId: accountId,
+      amount: amount,
+      description: description,
+    };
+    return this.http.post(environment.baseUrlAccounts + '/debit', data);
+  }
+
+  credit(accountId: string, amount: number, description: string) {
+    let data = {
+      accountId: accountId,
+      amount: amount,
+      description: description,
+    };
+    return this.http.post(environment.baseUrlAccounts + '/credit', data);
+  }
+
+  transfer(
+    accountSource: string,
+    accountDestination: string,
+    amount: number,
+    description: string
+  ) {
+    let data = { accountSource, accountDestination, amount, description };
+    return this.http.post(environment.baseUrlAccounts + '/transfer', data);
+  }
 }

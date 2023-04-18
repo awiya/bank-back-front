@@ -4,7 +4,7 @@ export interface Account {
   currentPage: number;
   totalPages: number;
   pageSize: number;
-  accountOperations: AccountOperation[];
+  accountOperationDTOS: AccountOperation[];
 }
 
 export interface AccountOperation {

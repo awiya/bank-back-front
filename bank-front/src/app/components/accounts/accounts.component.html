@@ -4,6 +4,7 @@
             <div class="card">
                 <div class="card-header text-center">
                     <h2>Comptes</h2>
+                    0738bf37-55ae-4d21-88f3-8d42345936ee
                 </div>
                 <div class="card-body">
                     <form [formGroup]="accountFormFroup" (ngSubmit)="handleSearchAccount()">
@@ -16,19 +17,52 @@
                 </div>
                 <div class="card-body">
                     <ng-container *ngIf="account$ | async as account">
-                        <div>
-                            <label for="">#</label>
+                        <div class="mt-1">
+                            <label for="">Identifiant:&nbsp;&nbsp;</label>
                             <label for=""><strong>{{account.accountId}}</strong></label>
                         </div>
+                        <div class="mt-2">
+                            <label for="">Solde:&nbsp;&nbsp;</label>
+                            <label>{{account.balance | number: '1.2-2'}}€</label>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th># </th>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th class="text-end">Montant</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let op of account.accountOperationDTOS">
+                                    <td>{{op.id}}</td>
+                                    <td>{{op.operationDate | date: 'dd/MM/yyyy :HH-mm-ss'}}</td>
+                                    <td>{{op.type}}</td>
+                                    <td class="text-end">{{op.amount| number: '1.2-2'}}€</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <ul class="nav nav-pills">
+                            <li *ngFor="let item of [].constructor(account.totalPages); let page = index">
+                                <a [ngClass]="page==currentPage?'btn-info':'btn-outline-info'" (click)="goToPage(page)"
+                                    class="btn  ms-1 mt-1">{{page}}</a>
+                            </li>
+                        </ul>
                     </ng-container>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
         <div class="col col-md-6">
+            <div class="card" *ngIf="account">
+                <div class="card-header">Operations</div>
+                <div class="card-body">
+                    <form [formGroup]="operationFormGroup" (ngSubmit)="handleAccountOperation()">
 
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-
 </div>
