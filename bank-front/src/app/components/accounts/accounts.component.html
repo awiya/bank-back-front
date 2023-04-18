@@ -4,19 +4,16 @@
             <div class="card">
                 <div class="card-header text-center">
                     <h2>Comptes</h2>
-                    0738bf37-55ae-4d21-88f3-8d42345936ee
                 </div>
                 <div class="card-body">
-                    <form [formGroup]="accountFormFroup" (ngSubmit)="handleSearchAccount()">
+                    <form [formGroup]="accountFormGroup" (ngSubmit)="handleSearchAccount()">
                         <div class="input-group">
                             <label class="input-group-text">Identifiant du compte:</label>
                             <input type="text" formControlName="accountId" class="form-control">
                             <button class="btn btn-info"><i class="bi bi-search">Search</i></button>
                         </div>
                     </form>
-                </div>
-                <div class="card-body">
-                    <ng-container *ngIf="account$ | async as account">
+                    <ng-container *ngIf="account | async as account">
                         <div class="mt-1">
                             <label for="">Identifiant:&nbsp;&nbsp;</label>
                             <label for=""><strong>{{account.accountId}}</strong></label>
@@ -46,7 +43,7 @@
                         </table>
                         <ul class="nav nav-pills">
                             <li *ngFor="let item of [].constructor(account.totalPages); let page = index">
-                                <a [ngClass]="page==currentPage?'btn-info':'btn-outline-info'" (click)="goToPage(page)"
+                                <a [ngClass]="page==currentPage?'btn-info':'btn-outline-info'" (click)="gotoPage(page)"
                                     class="btn  ms-1 mt-1">{{page}}</a>
                             </li>
                         </ul>
@@ -55,11 +52,40 @@
             </div>
         </div>
         <div class="col col-md-6">
-            <div class="card" *ngIf="account">
-                <div class="card-header">Operations</div>
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2>Operations</h2>
+                </div>
                 <div class="card-body">
                     <form [formGroup]="operationFormGroup" (ngSubmit)="handleAccountOperation()">
-
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" formControlName="operationType" value="DEBIT">
+                            <label class="form-check-label">DEBIT:</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" formControlName="operationType" value="CREDIT">
+                            <label class="form-check-label">CREDIT:</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" formControlName="operationType"
+                                value="TRANSFER">
+                            <label class="form-check-label">TRANSFER:</label>
+                        </div>
+                        <div class="mb-3" *ngIf="operationFormGroup.value.operationType=='TRANSFER'">
+                            <label class="form-label">Account Destination :</label>
+                            <input type="text" formControlName="accountDestination" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount :</label>
+                            <input type="text" formControlName="amount" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description :</label>
+                            <input type="text" formControlName="description" class="form-control">
+                        </div>
+                        <div class="d-grid mb-3">
+                            <button class="btn btn-success">Save Operation</button>
+                        </div>
                     </form>
                 </div>
             </div>

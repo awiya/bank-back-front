@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Account } from 'src/app/models/account.model';
 import { AccountsService } from 'src/app/services/accounts.service';
 
@@ -10,20 +10,22 @@ import { AccountsService } from 'src/app/services/accounts.service';
   styleUrls: ['./accounts.component.css'],
 })
 export class AccountsComponent implements OnInit {
-  accountFormFroup: FormGroup;
+  accountFormGroup!: FormGroup;
   currentPage: number = 0;
   pageSize: number = 5;
-  account$: Observable<Account>;
-  listAccounts: Account[];
-  operationFormGroup: FormGroup;
+  account!: Observable<Account>;
+  operationFormGroup!: FormGroup;
+  errorMessage!: string;
 
-  constructor(private fb: FormBuilder, private service: AccountsService) {}
+  constructor(
+    private fb: FormBuilder,
+    private accountService: AccountsService
+  ) {}
 
   ngOnInit(): void {
-    this.accountFormFroup = this.fb.group({
+    this.accountFormGroup = this.fb.group({
       accountId: this.fb.control(''),
     });
-
     this.operationFormGroup = this.fb.group({
       operationType: this.fb.control(null),
       amount: this.fb.control(0),
@@ -33,31 +35,34 @@ export class AccountsComponent implements OnInit {
   }
 
   handleSearchAccount() {
-    let id: string = this.accountFormFroup.value.accountId;
-    this.account$ = this.service.getAccount(
-      id,
-      this.currentPage,
-      this.pageSize
-    );
+    let accountId: string = this.accountFormGroup.value.accountId;
+    this.account = this.accountService
+      .getAccount(accountId, this.currentPage, this.pageSize)
+      .pipe(
+        catchError((err) => {
+          this.errorMessage = err.message;
+          return throwError(err);
+        })
+      );
   }
 
-  goToPage(page: number) {
+  gotoPage(page: number) {
     this.currentPage = page;
     this.handleSearchAccount();
   }
 
   handleAccountOperation() {
     let accountId: string = this.accountFormGroup.value.accountId;
-    let operationType = this.operationFromGroup.value.operationType;
-    let amount: number = this.operationFromGroup.value.amount;
-    let description: string = this.operationFromGroup.value.description;
+    let operationType = this.operationFormGroup.value.operationType;
+    let amount: number = this.operationFormGroup.value.amount;
+    let description: string = this.operationFormGroup.value.description;
     let accountDestination: string =
-      this.operationFromGroup.value.accountDestination;
+      this.operationFormGroup.value.accountDestination;
     if (operationType == 'DEBIT') {
-      this.service.debit(accountId, amount, description).subscribe({
+      this.accountService.debit(accountId, amount, description).subscribe({
         next: (data) => {
           alert('Success Credit');
-          this.operationFromGroup.reset();
+          this.operationFormGroup.reset();
           this.handleSearchAccount();
         },
         error: (err) => {
@@ -65,10 +70,10 @@ export class AccountsComponent implements OnInit {
         },
       });
     } else if (operationType == 'CREDIT') {
-      this.service.credit(accountId, amount, description).subscribe({
+      this.accountService.credit(accountId, amount, description).subscribe({
         next: (data) => {
           alert('Success Debit');
-          this.operationFromGroup.reset();
+          this.operationFormGroup.reset();
           this.handleSearchAccount();
         },
         error: (err) => {
@@ -76,12 +81,12 @@ export class AccountsComponent implements OnInit {
         },
       });
     } else if (operationType == 'TRANSFER') {
-      this.service
+      this.accountService
         .transfer(accountId, accountDestination, amount, description)
         .subscribe({
           next: (data) => {
             alert('Success Transfer');
-            this.operationFromGroup.reset();
+            this.operationFormGroup.reset();
             this.handleSearchAccount();
           },
           error: (err) => {

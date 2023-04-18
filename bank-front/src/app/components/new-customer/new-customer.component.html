@@ -21,7 +21,10 @@
                         && newCustomerFormGroup.controls['email'].errors 
                         && newCustomerFormGroup.controls['email'].errors!['email']">l'email est non valide</span>
                 </div>
-                <button [disabled]="!newCustomerFormGroup.valid" class="btn btn-info">Submit</button>
+                <div class="d-grid mb-3">
+                    <button [disabled]="!newCustomerFormGroup.valid" class="btn btn-info ">Submit</button>
+                </div>
+
             </form>
         </div>
     </div>
